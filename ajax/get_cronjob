@@ -1,0 +1,83 @@
+#!/usr/bin/perl
+
+use strict;
+
+BEGIN {
+        use lib "/var/opt/scripts/lib";
+}
+
+require "/var/opt/scripts/inc/settings.pm";
+my $conf = settings::_config();
+
+use DBI;
+use DB;
+use query;
+
+my $debug = undef;
+
+my $content = get_cronjob($conf, $ENV{'QUERY_STRING'});
+
+print "Content-type: text/html\n\n";
+print $content;
+
+
+sub get_cronjob {
+
+	my $config = shift;
+	my $qstring = shift;
+	return() if($qstring  !~ /^id\=[0-9]+$/);
+
+	my ($att, $id) = split("=", $qstring);
+
+	my $dbh = _connect($config);
+        use_db($dbh, 'cron');
+
+	my ($cron_content, $content, $hostname, $cronjob, $status);
+
+        my @select = select($dbh, 'cron_content,hostname,cronjob,status', 'cronjobs', "WHERE id='$id'");
+
+        foreach my $record (@select) {
+                my @fields = @{$record};
+                $cron_content = $fields[0];
+		$hostname = $fields[1];
+		$cronjob  = $fields[2];
+		$status   = uc($fields[3]);
+        }
+
+	chomp($cronjob);
+	$cronjob =~ s/^[\s]+//;
+
+	$dbh = _disconnect();
+
+	my @text = split("\n", $cron_content);
+
+	$content = "<pre>";
+	$content .= "Host:    $hostname\n";
+	$content .= "Cronjob: $cronjob\n";
+	$content .= "Status:  <span style='color: green'>$status</span>" if($status eq "OK");
+	$content .= "Status:  <span style='color: GoldenRod'>$status</span>" if($status eq "NOTICE");
+	$content .= "Status:  <span style='color: DarkOrange'>$status</span>" if($status eq "WARNING");
+	$content .= "Status:  <span style='color: red'>$status</span>" if($status eq "ERROR");
+	$content .= "\n---------------------------------------\n\n";
+
+	foreach my $line (@text) {
+
+		$line =~ s/(notice)/\<span\ style=\"color: GoldenRod\">$1\<\/span\>/i;
+		$line =~ s/(illegal)/\<span\ style=\"color: GoldenRod\">$1\<\/span\>/i;
+		$line =~ s/(warning)/\<span\ style=\"color: DarkOrange\">$1\<\/span\>/i;
+		$line =~ s/(not\ found)/\<span\ style=\"color: DarkOrange\">$1\<\/span\>/i;
+		$line =~ s/(error)/\<span\ style=\"color: red\">$1\<\/span\>/i;
+		$line =~ s/(critical)/\<span\ style=\"color: red\">$1\<\/span\>/i;
+		$line =~ s/(fatal)/\<span\ style=\"color: red\">$1\<\/span\>/i;
+		$line =~ s/(failed)/\<span\ style=\"color: red\">$1\<\/span\>/i;
+
+		$content .= $line . "\n";
+		
+
+	}
+
+	$content .= "This cronjob has no output\n.$cron_content\." if($cron_content !~ /[a-zA-Z]/);
+	$content .= "</pre>";
+	return($content);
+
+}

@@ -1,0 +1,256 @@
+#!/usr/bin/perl
+
+# This software is part of the cronprossecor
+# (c) Bernd Hilmar 2018-05-07 - VIRTEXXA Cloud Services SRL
+# https://virtexxa.com 
+# https://ihost24.com 
+# https://everymail.net
+# Released under GNU GPLv3
+
+use FindBin;
+
+BEGIN {
+	use lib "$FindBin::Bin/../lib";
+}
+
+require "$FindBin::Bin/../inc/settings.pm";
+my $conf = settings::_config("$FindBin::Bin/..");
+
+use DBI;
+use DB;
+use query;
+
+use strict;
+use Time::HiRes qw(gettimeofday);
+use Encode qw(encode decode encode_utf8);
+use Encode::Guess;
+
+use MIME::Lite;
+
+
+my $debug = undef;
+
+my $dbh = _connect($conf);
+use_db($dbh, 'cron');
+
+my @found_crons = get_cronjobs($conf);
+my $content_table = build_table($conf, \@found_crons);
+
+_delete_old_entries($conf);
+
+_disconnect($dbh);
+
+send_email($conf, $content_table);
+
+sub get_cronjobs {
+	
+	my $config = shift;
+	
+	my (@crons, $last_run);
+	
+	#insert($dbh, 'cronjobs', 'timestamp, hostname, cronjob, status, cron_content',"NOW(), '$cronhost', '$cronjob', '$status', '$croncontent'");
+	my @select = select($dbh, 'last_run', 'executions', "WHERE type='digest'");
+
+	foreach my $record (@select) {
+		my @fields = @{$record};
+		$last_run = $fields[0];
+	}
+	
+	print "Last run digest: " . $last_run . "\n" if($debug);
+	
+	my @selectcrons = select($dbh, 'timestamp,hostname,cronjob,status', 'cronjobs', "WHERE timestamp > '$last_run' ORDER BY timestamp ASC");
+
+	foreach my $record (@selectcrons) {
+
+		my @fields = @{$record};
+			my $cron;
+			$cron->{'timestamp'}    = $fields[0];
+			$cron->{'hostname'}     = $fields[1];
+			$cron->{'cronjob'}      = $fields[2];
+			$cron->{'status'}       = $fields[3];
+			#$cron->{'cron_content'} = $fields[4];
+			push @crons, $cron;
+			
+	}
+
+	update($dbh, 'executions', "last_run=NOW()", "type='digest'") if(!$debug);
+
+	return(@crons);
+	
+}
+
+
+sub build_table {
+	
+	my $config = $_[0];
+	my @crons = @{$_[1]};
+		
+	my ($table, $startddate, $enddate, $i, $last_run);
+	
+	foreach my $rec (@crons) {
+		
+		my($timestamp, $hostname, $cronjob, $status);
+		
+		$i++;
+		
+		foreach my $key (keys %{$rec}) {
+			
+			$startddate = $rec->{'timestamp'} if($i == 1);
+			
+			$timestamp = $rec->{'timestamp'} if($key eq "timestamp");
+			$hostname = substr($rec->{'hostname'},0,16) if($key eq "hostname");
+                        $hostname .= '...' if(length($rec->{'hostname'}) > 16 && $key eq "hostname");
+			
+			if($key eq "cronjob") {
+				$rec->{'cronjob'} =~ s/[\(\)]//g;
+				$rec->{'cronjob'} =~ m/\/([a-zA-Z0-9\.\-\_\ \|]+)$/;
+				$cronjob = substr($1,0,20);
+                                $cronjob .= '...' if(length($1) > 20);
+			}
+			
+			if($key eq "status") {
+				$status = "<span style='color: green'>$rec->{'status'}</span>" if($rec->{'status'} eq "ok");
+				$status = "<span style='color: GoldenRod '>$rec->{'status'}</span>" if($rec->{'status'} eq "notice");
+				$status = "<span style='color: DarkOrange'>$rec->{'status'}</span>" if($rec->{'status'} eq "warning");
+				$status = "<span style='color: red'>$rec->{'status'}</span>" if($rec->{'status'} eq "error");
+			}
+			
+			$enddate = $rec->{'timestamp'};
+				
+		}
+		$table .= "<tr><td>$timestamp</td><td>$hostname</td><td>$cronjob</td><td>$status</td></tr>\n";
+
+				
+	}
+	
+	my $body ="<h2>Cron Digest for $config->{'cron'}->{'company'}</h2>";
+	$body .= '<table>';
+	$body .= "<p>Cronjobs from $startddate to $enddate</p>";
+	$body .= "<tr><th>execution time</th><th>host</th><th>cronjob name</th><th>status</th></tr>\n$table";
+
+	
+	$body .= "</table>";
+
+	if(!$table) {
+
+		my @select = select($dbh, 'last_run', 'executions', "WHERE type='digest'");
+
+		foreach my $record (@select) {
+			my @fields = @{$record};
+			$last_run = $fields[0];
+		}
+
+		$body ="<h2>Cron Digest for $config->{'cron'}->{'company'}</h2>";
+		$body .= "<p>No Cronjobs found since $last_run where last digest was sent.";
+	}
+	$body .= "<p>More details can be found in the Cron Viewer: $config->{'cron'}->{'cron_viewer_link'}</p>";
+	
+	return($body);
+}
+
+sub send_email {
+
+	my $config = shift;
+	my $content = shift;
+	
+	
+	my $body = "<!DOCTYPE html><html><head><title>Cron Job Digest</title>" . simple_css() . "</head><body>";
+	$body .= $content;
+	$body .= "</body></html>";
+	
+	
+	my $msg = MIME::Lite->new(
+                Subject => "[$config->{'cron'}->{'slug'}] Cron Digest",
+                From    => "$config->{'cron'}->{'from'}",
+                To      => "$config->{'cron'}->{'sysadmin'}",
+                Type    => 'multipart/alternative',
+                Encoding => '7bit',
+                );
+
+		$msg->attach(
+                Type    => 'text/plain; 
+                        format=flowed;
+                        charset=iso-8859-1',
+                Data    => "Cronjob Digest: See your cronjobs here online $config->{'cron'}->{'cron_viewer_link'}.",
+                Encoding => 'quoted-printable',
+                
+                );
+                
+        $msg->attach(
+                Type    => 'text/html;
+                        charset=utf-8',
+                Data    => $body,
+                Encoding => 'quoted-printable',
+        );
+	
+	$msg->send();
+	
+}
+
+sub simple_css {
+	
+	my $simple_style ='<style type="text/css">';
+	
+	$simple_style .= qq~
+	td {
+		padding: 2px 3px;
+		border-top: 0px;
+		border-left: 0px;
+		border-right: 0px;
+		border-bottom: 1px solid #ccc;
+		white-space: nowrap;
+	}
+	th {
+		text-align: center;
+		font-weight: bold;
+		border-bottom: 1px solid #000;
+		padding: 3px 3px;
+		}
+	~;
+	
+	$simple_style .= "</style>";
+	
+	
+	return($simple_style);
+	
+}
+
+sub _delete_old_entries {
+
+	my $config = shift;
+
+	my @select = select($dbh, 'last_run', 'executions', "WHERE type='delete_old'");
+
+	my $last_run;
+
+        foreach my $record (@select) {
+                my @fields = @{$record};
+                $last_run = $fields[0];
+        }
+
+	print "Last run delete old: " . $last_run . "\n" if($debug);
+
+	my $last_run_time = _convert_time_to_unixtime($last_run);
+
+	my $timeframe = (time) - (86400 * 5); # 5 days
+	my $timeframe_date = _convert_unixtime_to_date($timeframe);
+
+	my $delete_older_than_time = (time) - (86400 * $config->{'cron'}->{'delete_old_after_days'});
+	my $delete_older_than_date = _convert_unixtime_to_date($delete_older_than_time);
+
+
+	if($debug) {
+		print "\nKeep logfiles for $config->{'cron'}->{'delete_old_after_days'} days.\nEntries older than $delete_older_than_date will be deleted.\n";
+		print "Job will be executed only if last run was before $timeframe_date\n";
+		print "DELETE from cronjobs WHERE timestamp < $delete_older_than_date\n\n";
+	} else {
+		if($timeframe > $last_run_time) {
+			 db_delete($dbh, 'cronjobs', 'timestamp < $delete_older_than_date');
+			 print "Entries older than $delete_older_than_date deleted in table 'cronjobs'.\n";
+		}
+	}
+
+	update($dbh, 'executions', "last_run=NOW()", "type='delete_old'") if(!$debug);
+
+
+}

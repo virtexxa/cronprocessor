@@ -1,0 +1,35 @@
+#!/usr/bin/perl
+
+# This software is part of the cronprossecor
+# (c) Bernd Hilmar 2018-05-07 - VIRTEXXA Cloud Services SRL
+# https://virtexxa.com 
+# https://ihost24.com 
+# https://everymail.net
+# Released under GNU GPLv3
+
+use FindBin;
+
+BEGIN {
+	use lib "$FindBin::Bin/lib";
+}
+
+require "$FindBin::Bin/inc/settings.pm";
+my $conf = settings::_config($FindBin::Bin);
+
+use DBI;
+use DB;
+use query;
+use templateparser;
+use cronprocessor;
+
+use strict;
+
+my $debug = undef;
+
+my $var = process($conf);;
+
+my $content = parse($conf, $var);
+
+print "Content-type: text/html\n\n";
+print $content;
+

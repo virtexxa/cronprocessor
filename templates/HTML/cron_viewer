@@ -1,0 +1,96 @@
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+<title>[slug] Cron Viewer</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style type="text/css">
+[css]	
+</style>
+
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <script>
+  $( function() {
+    $( "#datepicker_start" ).datepicker({ dateFormat: 'yy-mm-dd' });
+  } );
+  </script>
+  <script>
+  $( function() {
+    $( "#datepicker_end" ).datepicker({ dateFormat: 'yy-mm-dd' });
+  } );
+  </script>
+<script>
+
+        $(document).ready(function() {
+            $("a").click(function(event) {
+                var ID = event.target.id;
+                $('#crondetail').load('[cron_viewer_ajax]' + ID);
+            });
+
+$('.table_row').click(function() { //Once any element with class "table_row" is clicked
+    $('.table_row').removeClass('selected'); // "Unselect" all the rows
+    $(this).addClass('selected'); // Select the one clicked
+});
+
+        });
+
+
+
+</script>
+
+</head>
+<body>
+	<div class="pagewrapper">
+		<div class="searchbar">
+			<a href="[cron_viewer_link]"><span class="logo"></span></a>
+			<h1>Cronjobs</h1>
+			<form action="[cron_viewer_link]" method="POST">
+			<div class="searchbox">
+				<span class="attribute">Search:</span>
+				<input type="text" name="keyword" value="[keyword]"/>
+				<input type="submit" value="search" / >
+			</div>
+			<div class="datebox">
+				<p class="datefrom">from</p>
+				<input type="text" id="datepicker_start" name="period_start" value="[period_start]" />
+				<p class="dateto">to</p>
+				<input type="text" id="datepicker_end" name="period_end" value= "[period_end]"/>
+			</div>
+			</form>
+			
+		</div>
+		<div class="content">
+		<div class="col1">
+			<div class="info">
+			<h2>Crons in Period</h2>
+				<h1>[crons_in_period]</h1>
+			<h2>Notice</h2>
+				<h1>[cron_notices]</h1>
+			<h2>Warnings</h2>
+				<h1>[cron_warnings]</h1>
+			<h2>Errors</h2>
+				<h1>[cron_errors]</h1>
+			</div>
+		</div>
+		<div class="col2">
+			<div class="list">
+				[cronjob_list]
+			</div>
+		</div>
+		<div class="col3">
+			<div id="crondetail">
+
+			</div>
+		</div>
+		</div>
+	</div>
+		<div class="footer">
+			<p>
+				&copy; [c_years] Cron Processor for 
+				[company]
+				written by <a href="https://hilmar.at" target="blank"">Bernd Hilmar</a>
+			</p>
+		</div>
+
+</body>
+</html>

@@ -1,0 +1,138 @@
+#!/usr/bin/perl
+
+# This software is part of the cronprossecor
+# (c) Bernd Hilmar 2018-05-07 - VIRTEXXA Cloud Services SRL
+# https://virtexxa.com 
+# https://ihost24.com 
+# https://everymail.net
+# Released under GNU GPLv3
+
+use FindBin;
+
+BEGIN {
+	use lib "$FindBin::Bin/../lib";
+}
+
+require "$FindBin::Bin/../inc/settings.pm";
+my $conf = settings::_config("$FindBin::Bin/..");
+
+use DBI;
+use DB;
+use query;
+
+use strict;
+use Time::HiRes qw(gettimeofday);
+
+my $debug = undef;
+my $handler = 'forward';
+my $subject_tag = 'Cron ';
+my $sendmailbin = '/usr/sbin/sendmail';
+
+my $email;
+my $header = 1;
+my @mailcontent;
+
+while (<>) {
+	next if($_ =~ /^Resent\-To\:/);
+	next if($_ =~ /^Delivered\-To\:/);
+	next if($_ =~ /^X\-Spam/);
+
+	if($_ =~ /^To: / && $header) {
+		$email .= "To: $conf->{'cron'}->{'sysadmin'}\n";
+		$email .= 'X-VXX-Loop-Detect: system@virtexxa.com' . "\n";
+	} else {
+		if($_ =~ /^Subject\:/) {
+			$_ =~ s/\n$//;
+			$email .= $_ . " (processed)\n";
+		} else {
+			$email .= $_;
+		}
+		push @mailcontent, $_;
+	}
+
+	if($_ =~ /^Subject\:/ && $header) {
+		$handler = 'process_local' if($_ =~ /^Subject\:\ $subject_tag/ && $handler ne "discard");
+		$handler = 'discard' if($_ =~ /^X\-VXX\-Loop\-Detect\:\ system\@virtexxa\.com/);
+		foreach my $key (keys %{$conf->{'cron'}->{'ignore'}}) {
+			if($_ =~ /$key/) {
+				$handler = 'forward' if($conf->{'cron'}->{'ignore'}->{$key});
+				print "key: $key, $conf->{'cron'}->{'ignore'}->{$key}\n" if($debug);
+			}
+		}
+		if($debug) {
+			print $_;
+			print "Tag: " . $subject_tag . "\n";
+			print $handler . "\n\n";
+		}
+	}
+
+	$header = undef if($_ eq "\n");
+}
+
+exit if($debug);
+exit if($handler eq "discard");
+
+if($handler eq "forward") {
+
+	open(MAIL, "|$sendmailbin -oi -t -f $conf->{'cron'}->{'from'}");
+	#open(MAIL, ">/var/opt/scripts/mail.debug");
+	print MAIL $email;
+	print MAIL "\n\n(mail processed by manage-ihost24-com:/var/opt/scripts/cron_handler)\n";
+	close(MAIL);
+	#print $email;
+
+} else {
+
+	# In case of a valid cronjob email we
+	# extract the email to its contents and add it to the database
+
+	my($cronhost, $cronjob, $status, $croncontent);
+	my @body;
+	my $bodyswitch = undef;
+
+	foreach my $line (@mailcontent) {
+
+		$bodyswitch = 1 if($line eq "\n" && !$bodyswitch);
+		if($bodyswitch) {
+			push @body, $line;
+			$croncontent .= $line;
+		}
+
+		if($line =~ /^Return-Path\:\ / && !$bodyswitch) {
+			$line =~ m/root\@([a-z0-9\.\-]+)\>/;
+			$cronhost = $1;
+			
+		}
+
+		if($line =~ /^Subject\:\ / && !$bodyswitch) {
+			$cronjob = $line;
+			$cronjob =~ s/Cron\ \<root\@[a-z0-9\.\-]+\> //i;
+			$cronjob =~ s/^Subject\:\ //;
+			foreach my $key (keys %{$conf->{'cron'}->{'strip'}}) {
+				$cronjob =~ s/$key// if($conf->{'cron'}->{'strip'}->{$key});
+			}
+			
+		}
+
+	}
+
+	$status = 'ok';
+
+	foreach my $line (@body) {
+		$status = 'notice' if($line =~ /notice/i || $line =~ /illegal/i || $line =~ /not resolve hostname/i);
+		$status = 'warning' if($line =~ /warning/i || $line =~ /not\ found/i);
+		$status = 'error' if($line =~ /error/i || $line =~ /critical/i || $line =~ /fatal/i || $line =~ /failed/i);
+	}
+
+	# insert the cronjob into the database
+
+	my $dbh = _connect($conf);
+	use_db($dbh, 'cron');
+
+	insert($dbh, 'cronjobs', 'timestamp, hostname, cronjob, status, cron_content',"NOW(), '$cronhost', '$cronjob', '$status', '$croncontent'");
+
+	_disconnect($dbh);
+
+
+}
+

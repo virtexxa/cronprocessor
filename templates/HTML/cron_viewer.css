@@ -1,0 +1,294 @@
+	@import url('https://fonts.googleapis.com/css?family=Titillium+Web:300');
+	* {
+	    box-sizing: border-box;
+	}	
+	body {
+		font-family: 'Titillium Web', sans-serif;
+		font-weight: 300;
+		font-size: 16px;
+	}
+	.pagewrapper {
+		position: absolute;
+		left: 0;
+		top: 0;
+		width: 100%;
+		height: 100%;
+		display:block;
+	}
+	.content {
+		display: block;
+		height: 90%;
+	}
+	.searchbar {
+		background-color: #333;
+		width: 100%;
+		height: 75px;
+		display: block;
+		color: #fff;
+	}
+	.searchbar .logo {
+		float: left;
+		max-width: 300px;
+		min-width: 250px;
+		margin: 0;
+		padding: 0px 0px 0px 0px;
+		height: 100%;
+		background-image: url(/_images/logo-virtexxa-white.png);
+		background-size:     60%;
+		background-repeat:   no-repeat;
+		background-position: 20px 35%;  
+		/*background-color: #ccc;*/
+	}
+	.searchbar h1 {
+		margin: 0;
+		font-size: 36px;
+		font-weight: 800;
+		padding-top: 8px;
+		padding-left: 20px;
+		float: left;
+	}
+	.searchbar form {
+		margin: 0;
+	}
+	.searchbar .searchbox {
+		float: left;
+		padding: 25px 0 0 0;
+	}
+	.searchbar .searchbox .attribute {
+		float: left;
+		padding: 0.7% 20px 0px 20px;
+	}
+	.searchbar .searchbox form {
+		padding: 1.5% 20px 0px 20px;
+		margin: 0;
+	}
+	.searchbar input[type=text] {
+		float: left;
+		height: 28px;
+		width: 120px;
+		border: 0;
+		border-radius: 5px;
+		padding-left: 10px;
+		margin: 0;
+		font-size: inherit;
+		font-family: inherit;
+	}
+	.searchbar input[type=submit] {
+		float: left;
+		height: 28px;
+		border: 0;
+		border-radius: 5px;
+		padding-left: 10px;
+		margin: 0 0 0 20px;
+		padding-left: 10px;
+		padding-right: 10px;
+		font-size: inherit;
+		font-family: inherit;
+		background-color: #aaa;
+	}
+	.searchbar .datebox {
+		margin: 0;
+		padding: 25px 0 0 0;
+		float: left;
+		display: block;
+	}
+	.searchbar .datebox p.datefrom {
+		float: left;
+		margin: 0;
+		padding: 0.7% 8px;
+	}
+	.searchbar .datebox p.dateto {
+		float: left;
+		margin:0;
+		padding: 0.7% 8px;
+	}
+	#datepicker_start, #datepicker_end {
+		background-color: #ccc;
+	}
+	.col1 {
+		clear: both;
+		width: 15%;
+		height: 100%;
+		background-color: #024271;
+		float: left;
+		display: inline-block;
+		color: #fff;
+		overflow: scroll;
+	}
+	.col1 .info {
+		height: 100%;
+		overflow: scroll;
+		display: block;
+		padding-top: 25px;
+	}
+	.col1 .info h1 {
+		margin: 0;
+		padding: 0 0 20px 0;
+		font-size: 6vh;
+		font-weight: 800;
+		text-align: center;
+		line-height: 100%;
+	}
+	.col1 .info h1 a {
+		color: inherit;
+	}
+	.col1 .info h2 {
+		margin: 0;
+		padding:10px 0 0 0;
+		text-align: center;
+		font-size: 3vh;
+		font-weight: 400;
+		line-height: 100%;
+	}
+	.col2 {
+		width: 40%;
+		height: 100%;
+		background-color: #eee;
+		float: left;
+		display: inline-block;
+		color: #333;
+	}
+	.col2 .list {
+		height: 100%;
+		overflow: scroll;
+		display: block;
+		padding-top: 25px;
+		padding-left: 20px;
+		padding-right: 20px;
+		padding-bottom: 100px;
+	}
+	.col3 {
+		width: 45%;
+		height: 100%;
+		background-color: #000;
+		display: inline-block;
+		float: left;
+		overflow: scroll;
+		color: #eee;
+	}
+	#crondetail {
+		height: 100%;
+		overflow: scroll;
+		display: block;
+		padding-top: 25px;
+		padding-left: 20px;
+		padding-right: 20px;
+		padding-bottom: 100px;
+		color: #eee;
+	}
+	.col3 #crondetail pre {
+		font-size: 13px;
+		font-family: Courier, "Courier-New", "CourierNew", monospace;
+	}
+	.footer {
+		position: absolute;
+		clear: both;
+		left: 0;
+		bottom: 0;
+		width: 100%;
+		background-color: #012a48;
+		height: 5%;
+		min-height: 25px;
+		color: #eee;
+		padding: 0px;
+	}
+	.footer p {
+		padding: 3px 20px 10px 20px;
+		font-size: 14px;
+		margin: 0;
+		color: #eee;
+	}
+	.footer p a {
+		color: #c0e3ff;
+		text-decoration: none;
+
+	}
+	.footer p a:hover, .footer p a:active {
+		color: rgb(255, 170, 182);
+	}
+
+/* table styles */
+
+	.tablelist-title {
+		padding: 8px 0px;
+		font-weight: 600;
+	}
+
+	td {
+                padding: 2px 3px;
+                border-top: 0px;
+                border-left: 0px;
+                border-right: 0px;
+                border-bottom: 1px solid #ccc;
+                white-space: nowrap;
+        }
+        th {
+                text-align: center;
+                font-weight: bold;
+                border-bottom: 1px solid #000;
+                padding: 3px 3px;
+                }
+	td span.status {
+		width: 20px;
+		height: 20px;
+		border-radius: 10px;
+		display: block;
+	}
+	td span.status.ok {
+		background-color: green;
+	}
+	td span.status.notice {
+		background-color: GoldenRod;
+	}
+	td span.status.warning {
+		background-color: DarkOrange;
+	}
+	td span.status.error {
+		background-color: red;
+	}
+
+	#cronjoblist td a {
+		color: inherit;
+	}
+
+	.table_row.selected {
+    		background-color: #b1dbf6;
+	}
+	table tr.table_row:hover {
+		background-color: #d5e7f6;
+	}
+	table tr.table_row.selected:hover {
+		background-color: #a5f6cc;
+	}
+
+
+/* responsible styles */
+
+	@media only screen and (max-width: 1210px) {
+		.searchbar {
+			height: 180px;
+		}
+		.searchbar .searchbox {
+			padding: 30px 0 0 0;
+		}
+		.searchbar input[type=text] {
+			height: 30px;
+			width: 120px;
+		}
+		.searchbar input[type=submit] {
+			height: 30px;
+		}
+		.searchbar .datebox {
+			padding-left: 40px;
+		}
+		.searchbar h1 {
+			padding-top: 45px;
+		}
+	}	
+	@media only screen and (max-width: 780px) {
+		.searchbar .logo {
+			max-width: 150px;
+			background-size: 80%;
+		}
+	}
+

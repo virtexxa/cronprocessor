@@ -1,0 +1,6 @@
+AuthName "Internal"
+AuthType Basic
+AuthBasicProvider file
+AuthUserFile "/<path_to_passwdfile>/htpasswd"
+Require valid-user
+
