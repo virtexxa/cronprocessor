@@ -47,7 +47,7 @@ sub _config {
 
 				# path to templates and links
 
-				'cron_html_template' 	=> '/var/www/whmcs/_tools/cronprocessor/templates/HTML/cron_viewer',
+				'cron_html_template' 	=> $rootpath . '/templates/HTML/cron_viewer',
 				'cron_viewer_link'	=> 'https://manage.ihost24.com/_tools/cronprocessor/cron_viewer',
 				'cron_viewer_ajax'	=> 'https://manage.ihost24.com/_tools/cronprocessor/ajax/get_cronjob?id=',
 
