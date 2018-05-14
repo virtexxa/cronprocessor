@@ -15,3 +15,4 @@ searchable by status, title, hostname and by date.
 
 Additionally you can send a digest of all jobs once per day by email.
 
+See more information <a href="https://github.com/virtexxa/cronprocessor/wiki">here</a>
