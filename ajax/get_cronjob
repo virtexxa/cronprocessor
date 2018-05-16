@@ -2,16 +2,19 @@
 
 use strict;
 
+use FindBin;
+
 BEGIN {
-        use lib "/var/opt/scripts/lib";
+        use lib "$FindBin::Bin/../lib";
 }
 
-require "/var/opt/scripts/inc/settings.pm";
-my $conf = settings::_config();
+require "$FindBin::Bin/../inc/settings.pm";
+my $conf = settings::_config("$FindBin::Bin/..");
 
 use DBI;
 use DB;
 use query;
+use cronprocessor;
 
 my $debug = undef;
 
@@ -38,9 +41,9 @@ sub get_cronjob {
 
         foreach my $record (@select) {
                 my @fields = @{$record};
-                $cron_content = $fields[0];
-		$hostname = $fields[1];
-		$cronjob  = $fields[2];
+                $cron_content = unescape_value($fields[0]);
+		$hostname = unescape_value($fields[1]);
+		$cronjob  = unescape_value($fields[2]);
 		$status   = uc($fields[3]);
         }
 

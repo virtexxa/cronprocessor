@@ -16,7 +16,7 @@ use CGI;
 use CGI::Carp qw(fatalsToBrowser set_message carpout);
 
 our @ISA = qw(Exporter);
-our @EXPORT = qw(process);
+our @EXPORT = qw(process unescape_value escape_value);
 
 sub process {
 
@@ -100,8 +100,8 @@ sub process {
                 my @fields = @{$record};
                         my $cron;
                         $cron->{'timestamp'}    = $fields[0];
-                        $cron->{'hostname'}     = $fields[1];
-                        $cron->{'cronjob'}      = $fields[2];
+                        $cron->{'hostname'}     = unescape_value($fields[1]);
+                        $cron->{'cronjob'}      = unescape_value($fields[2]);
                         $cron->{'status'}       = $fields[3];
 			$cron->{'id'}		= $fields[4];
                         #$cron->{'cron_content'} = $fields[4];

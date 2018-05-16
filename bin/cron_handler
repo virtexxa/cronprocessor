@@ -19,6 +19,7 @@ my $conf = settings::_config("$FindBin::Bin/..");
 use DBI;
 use DB;
 use query;
+use cronprocessor;
 
 use strict;
 use Time::HiRes qw(gettimeofday);
@@ -95,17 +96,17 @@ if($handler eq "forward") {
 		$bodyswitch = 1 if($line eq "\n" && !$bodyswitch);
 		if($bodyswitch) {
 			push @body, $line;
-			$croncontent .= $line;
+			$croncontent .= escape_value($line);
 		}
 
 		if($line =~ /^Return-Path\:\ / && !$bodyswitch) {
 			$line =~ m/root\@([a-z0-9\.\-]+)\>/;
-			$cronhost = $1;
+			$cronhost = escape_value($1);
 			
 		}
 
 		if($line =~ /^Subject\:\ / && !$bodyswitch) {
-			$cronjob = $line;
+			$cronjob = escape_value($line);
 			$cronjob =~ s/Cron\ \<root\@[a-z0-9\.\-]+\> //i;
 			$cronjob =~ s/^Subject\:\ //;
 			foreach my $key (keys %{$conf->{'cron'}->{'strip'}}) {
