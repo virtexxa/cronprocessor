@@ -183,6 +183,7 @@ sub build_table {
                         if($key eq "cronjob") {
 				$rec->{'cronjob'} =~ s/[\(\)]//g;
                                 $rec->{'cronjob'} =~ m/\/([a-zA-Z0-9\.\-\_\ \|\*\<\>\:\"\&\(\)\[\]\{\}\$\!\^]+)$/;
+				$cronjob = "Untitled" if(!$1);
                                 $cronjob = substr($1,0,20);
 				$cronjob .= '...' if(length($1) > 20);
                         }
