@@ -73,6 +73,7 @@ sub get_cronjob {
 		$line =~ s/(critical)/\<span\ style=\"color: red\">$1\<\/span\>/i;
 		$line =~ s/(fatal)/\<span\ style=\"color: red\">$1\<\/span\>/i;
 		$line =~ s/(failed)/\<span\ style=\"color: red\">$1\<\/span\>/i;
+		$line =~ s/(denied)/\<span\ style=\"color: red\">$1\<\/span\>/i;
 
 		$content .= $line . "\n";
 		

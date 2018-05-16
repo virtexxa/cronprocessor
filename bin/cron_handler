@@ -122,7 +122,7 @@ if($handler eq "forward") {
 	foreach my $line (@body) {
 		$status = 'notice' if($line =~ /notice/i || $line =~ /illegal/i || $line =~ /not resolve hostname/i);
 		$status = 'warning' if($line =~ /warning/i || $line =~ /not\ found/i);
-		$status = 'error' if($line =~ /error/i || $line =~ /critical/i || $line =~ /fatal/i || $line =~ /failed/i);
+		$status = 'error' if($line =~ /error/i || $line =~ /critical/i || $line =~ /fatal/i || $line =~ /failed/ || $line =~ /denied/i);
 	}
 
 	# insert the cronjob into the database
