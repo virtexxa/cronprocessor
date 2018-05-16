@@ -1,1 +1,15 @@
 /* your custom style here */
+
+.searchbar .logo {
+                max-width: 300px;
+                min-width: 250px;
+                margin: 0;
+                padding: 0px 0px 0px 0px;
+                height: 100%;
+                background-image: url('https://www.emerion.com/assets/images/i/emerionLogoBg.png');
+                background-size:     100%;
+                background-repeat:   no-repeat;
+                background-position: 20px 15px;
+                /*background-color: #ccc;*/
+}
+

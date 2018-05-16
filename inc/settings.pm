@@ -16,16 +16,16 @@ sub _config {
 				# to addresses: for all non cron emails 
 				# and recipients of the digest email
 				# multiple addresses are comma seperated.
-				'sysadmin'	=> 'bernd@virtexxa.com',
+				'sysadmin'	=> 'system@emerion.net',
 
 				# sender address
-				'from'		=> 'system@ihost24.com',
+				'from'		=> 'system@emerion.net',
 
 				# Company or Service Name
-				'company'	=> 'VIRTEXXA Cloud Services SRL',
+				'company'	=> 'emerion WebHosting GmbH',
 
 				# slug (shortname)
-				'slug'		=> 'virtexxa',
+				'slug'		=> 'emerion',
 
 				# Enter here path of cronscripts you do not want to be saved to the database.
 				# instead of to be added to the database, the cron mail will be delivered normally.
@@ -48,8 +48,8 @@ sub _config {
 				# path to templates and links
 
 				'cron_html_template' 	=> $rootpath . '/templates/HTML/cron_viewer',
-				'cron_viewer_link'	=> 'https://manage.ihost24.com/_tools/cronprocessor/cron_viewer',
-				'cron_viewer_ajax'	=> 'https://manage.ihost24.com/_tools/cronprocessor/ajax/get_cronjob?id=',
+				'cron_viewer_link'	=> 'https://syscron.emerion.com/cron_viewer',
+				'cron_viewer_ajax'	=> 'https://syscron.emerion.com/ajax/get_cronjob?id=',
 
 				# DELETE old cronjobs
 				# you can define a value in days, when you want to delete old cronjobs.
@@ -59,7 +59,7 @@ sub _config {
 				# will not work. Due to performance issues the deletion does not work on every execution,
 				# at least there is a timeframe of 5 days, so the deletion is only executed every 5 days.
 
-				'delete_old_after_days'	=> '1095', # value in days: for example 356 = delete jobs after 1 year
+				'delete_old_after_days'	=> '356', # value in days: for example 356 = delete jobs after 1 year
 								   # 1068 = 3 years
 						
 		},
