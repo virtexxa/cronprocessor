@@ -1,0 +1,16 @@
+# Configuration file  for cronprocessor
+#
+# Variablename=Value
+# Please note: no space between 'name' and 'value': name=value is the correct syntax
+
+[db_config]
+
+db_host=localhost
+db_name=
+db_user=
+db_pass=
+db_type=
+
+# for detailled configuration please open settings.pm and configure the values there.
+
+
