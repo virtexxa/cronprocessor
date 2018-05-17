@@ -213,6 +213,10 @@
 		padding: 8px 0px;
 		font-weight: 600;
 	}
+	.tablelist-title small {
+		font-size: 12px;
+		font-weight: normal;
+	}
 
 	td {
                 padding: 2px 3px;

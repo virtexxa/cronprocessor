@@ -93,7 +93,7 @@ sub process {
 		$where = qq~timestamp > '$date_start' AND timestamp < '$date_end'~;
 	}
 
-	my @selectcrons = select($dbh, 'timestamp,hostname,cronjob,status,id', 'cronjobs', "WHERE $where ORDER BY timestamp ASC");
+	my @selectcrons = select($dbh, 'timestamp,hostname,cronjob,status,id', 'cronjobs', "WHERE $where ORDER BY timestamp DESC");
 
         foreach my $record (@selectcrons) {
 
@@ -219,7 +219,7 @@ sub build_table {
 
 	my $searchinfo;
 	$searchinfo = "<br />Search: $var->{'keyword'}" if($var->{'keyword'});
-        my $body =qq~<p class="tablelist-title">Cronjobs from $var->{'date_start'} to $var->{'date_end'}$searchinfo</p>~;
+        my $body =qq~<p class="tablelist-title">Cronjobs from $var->{'date_end'} to $var->{'date_start'}$searchinfo<br /><small>(Newest entry first)</small></p>~;
         $body .= '<table id="cronjoblist">';
         $body .= "<tr><th>execution time</th><th>host</th><th>cronjob name</th><th>status</th></tr>\n$table";
 
