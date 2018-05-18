@@ -74,7 +74,11 @@ sub get_cronjobs {
 		}
 
 		update($dbh, 'executions', "last_run=NOW()", "type='digest'") if(!$debug);
+	} else {
+		insert($dbh, 'executions', 'type, last_run',"'digest', NOW()");	
+
 	}
+	
 
 	return(@crons);
 	
@@ -250,8 +254,12 @@ sub _delete_old_entries {
 			 print "Entries older than $delete_older_than_date deleted in table 'cronjobs'.\n";
 		}
 	}
+	if($last_run) {
 
-	update($dbh, 'executions', "last_run=NOW()", "type='delete_old'") if(!$debug);
+		update($dbh, 'executions', "last_run=NOW()", "type='delete_old'") if(!$debug);
+	} else {
+		insert($dbh, 'executions','type, last_run',"'delete_old',NOW()");
+	}
 
 
 }
