@@ -244,8 +244,8 @@ sub _delete_old_entries {
 		print "Job will be executed only if last run was before $timeframe_date\n";
 		print "DELETE from cronjobs WHERE timestamp < $delete_older_than_date\n\n";
 	} else {
-		if($timeframe > $last_run_time) {
-			 db_delete($dbh, 'cronjobs', 'timestamp < $delete_older_than_date');
+		if($timeframe > $last_run_time && $last_run_time) {
+			 db_delete($dbh, 'cronjobs', "timestamp < $delete_older_than_date");
 			 print "Entries older than $delete_older_than_date deleted in table 'cronjobs'.\n";
 		}
 	}
