@@ -58,22 +58,23 @@ sub get_cronjobs {
 	
 	print "Last run digest: " . $last_run . "\n" if($debug);
 	
-	my @selectcrons = select($dbh, 'timestamp,hostname,cronjob,status', 'cronjobs', "WHERE timestamp > '$last_run' ORDER BY timestamp ASC");
+	if($last_run) {
+		my @selectcrons = select($dbh, 'timestamp,hostname,cronjob,status', 'cronjobs', "WHERE timestamp > '$last_run' ORDER BY timestamp ASC");
 
-	foreach my $record (@selectcrons) {
+		foreach my $record (@selectcrons) {
 
-		my @fields = @{$record};
-			my $cron;
-			$cron->{'timestamp'}    = $fields[0];
-			$cron->{'hostname'}     = $fields[1];
-			$cron->{'cronjob'}      = $fields[2];
-			$cron->{'status'}       = $fields[3];
-			#$cron->{'cron_content'} = $fields[4];
-			push @crons, $cron;
-			
+			my @fields = @{$record};
+				my $cron;
+				$cron->{'timestamp'}    = $fields[0];
+				$cron->{'hostname'}     = $fields[1];
+				$cron->{'cronjob'}      = $fields[2];
+				$cron->{'status'}       = $fields[3];
+				#$cron->{'cron_content'} = $fields[4];
+				push @crons, $cron;
+		}
+
+		update($dbh, 'executions', "last_run=NOW()", "type='digest'") if(!$debug);
 	}
-
-	update($dbh, 'executions', "last_run=NOW()", "type='digest'") if(!$debug);
 
 	return(@crons);
 	
