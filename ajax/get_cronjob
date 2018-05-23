@@ -35,9 +35,9 @@ sub get_cronjob {
 	my $dbh = _connect($config);
         use_db($dbh, 'cron');
 
-	my ($cron_content, $content, $hostname, $cronjob, $status);
+	my ($cron_content, $content, $hostname, $cronjob, $status, $timestamp);
 
-        my @select = select($dbh, 'cron_content,hostname,cronjob,status', 'cronjobs', "WHERE id='$id'");
+        my @select = select($dbh, 'cron_content,hostname,cronjob,status,timestamp', 'cronjobs', "WHERE id='$id'");
 
         foreach my $record (@select) {
                 my @fields = @{$record};
@@ -45,6 +45,7 @@ sub get_cronjob {
 		$hostname = unescape_value($fields[1]);
 		$cronjob  = unescape_value($fields[2]);
 		$status   = uc($fields[3]);
+		$timestamp = $fields[4];
         }
 
 	chomp($cronjob);
@@ -57,6 +58,7 @@ sub get_cronjob {
 	$content = "<pre>";
 	$content .= "Host:    $hostname\n";
 	$content .= "Cronjob: $cronjob\n";
+	$content .= "Time:    $timestamp\n";
 	$content .= "Status:  <span style='color: green'>$status</span>" if($status eq "OK");
 	$content .= "Status:  <span style='color: GoldenRod'>$status</span>" if($status eq "NOTICE");
 	$content .= "Status:  <span style='color: DarkOrange'>$status</span>" if($status eq "WARNING");

@@ -181,8 +181,8 @@ sub build_table {
 			$hostname .= '...' if(length($rec->{'hostname'}) > 16 && $key eq "hostname");
 
                         if($key eq "cronjob") {
-				$rec->{'cronjob'} =~ s/[\(\)]//g;
-                                $rec->{'cronjob'} =~ m/\/([a-zA-Z0-9\.\-\_\ \|\*\<\>\:\"\&\(\)\[\]\{\}\$\!\^]+)$/ if($rec->{'cronjob'} =~ /\//);
+				$rec->{'cronjob'} =~ s/[\(\)]+//g;
+                                $rec->{'cronjob'} =~ m/\/([a-zA-Z0-9\.\-\_\ \|\*\<\>\:\"\&\[\]\{\}\$\!\^]+)$/ if($rec->{'cronjob'} =~ /\//);
 				my $title = $1;
 				$title = $rec->{'cronjob'} if(!$title);
                                 $cronjob = substr($title,0,20);
