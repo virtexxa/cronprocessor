@@ -28,6 +28,7 @@ my $debug = undef;
 my $handler = 'forward';
 my $subject_tag = 'Cron ';
 my $sendmailbin = '/usr/sbin/sendmail';
+my $hostnamebin = '/bin/hostname';
 
 my $email;
 my $header = 1;
@@ -75,10 +76,14 @@ exit if($handler eq "discard");
 
 if($handler eq "forward") {
 
+	my $hostname = `$hostnamebin` if($hostnamebin);
+
+	$hostname =~ s/\./\-/g;
+
 	open(MAIL, "|$sendmailbin -oi -t -f $conf->{'cron'}->{'from'}");
 	#open(MAIL, ">/var/opt/scripts/mail.debug");
 	print MAIL $email;
-	print MAIL "\n\n(mail processed by manage-ihost24-com:/var/opt/scripts/cron_handler)\n";
+	print MAIL "\n\n(mail processed by $hostname:$0)\n";
 	close(MAIL);
 	#print $email;
 
