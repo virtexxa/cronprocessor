@@ -76,6 +76,7 @@ sub get_cronjob {
 		$line =~ s/(fatal)/\<span\ style=\"color: red\">$1\<\/span\>/i;
 		$line =~ s/(failed)/\<span\ style=\"color: red\">$1\<\/span\>/i;
 		$line =~ s/(denied)/\<span\ style=\"color: red\">$1\<\/span\>/i;
+		$line =~ s/(no\ such\ file)/\<span\ style=\"color: DarkOrange\">$1\<\/span\>/i;
 
 		$content .= $line . "\n";
 		
