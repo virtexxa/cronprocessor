@@ -255,7 +255,7 @@ sub escape_value {
 
         my $val = shift;
 
-        $val =~ s/\<(.*)\>//mg; # strip any html tags # html not allowed
+        #$val =~ s/\<(.*)\>//mg; # strip any html tags # html not allowed
         $val =~ s/[\'\`\~\´]//mg;
         $val =~ s/\"\(\)\{\}/\\\"\\\(\\\)\\\{\\\}/mg;
 
