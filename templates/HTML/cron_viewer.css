@@ -273,7 +273,7 @@
 			height: 180px;
 		}
 		.searchbar .searchbox {
-			padding: 30px 0 0 0;
+			padding: 60px 0 0 0;
 		}
 		.searchbar input[type=text] {
 			height: 30px;
@@ -284,6 +284,7 @@
 		}
 		.searchbar .datebox {
 			padding-left: 40px;
+			padding-top: 60px;
 		}
 		.searchbar h1 {
 			padding-top: 45px;
