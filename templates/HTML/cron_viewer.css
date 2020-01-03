@@ -268,7 +268,7 @@
 
 /* responsible styles */
 
-	@media only screen and (max-width: 1210px) {
+	@media only screen and (max-width: 780px) {
 		.searchbar {
 			height: 180px;
 		}
@@ -288,6 +288,9 @@
 		}
 		.searchbar h1 {
 			padding-top: 45px;
+		}
+		.footer {
+			display: none;
 		}
 	}	
 	@media only screen and (max-width: 780px) {
@@ -324,6 +327,9 @@
 			width: 100%;
 			clear: both;
 		}
+		.footer {
+			display: none;
+		}
 	}
 
 	@media only screen and (min-width: 780px) and (max-width: 1024px) {
@@ -331,6 +337,9 @@
 			width: 100%;
 			clear: both;
 			color: #333;
+		}
+		.searchbar .datebox {
+			margin-bottom: 20px;
 		}
 	} 
 
