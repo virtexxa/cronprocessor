@@ -296,3 +296,40 @@
 		}
 	}
 
+	@media only screen and (max-width: 480px) {
+   		.searchbar h1 {
+       			font-size: 18px;
+       			padding-top: 67px !important;
+    		}
+		.searchbar form {
+			width: 100%;
+			clear: both;
+			color: #333;
+		}
+		.searchbar form input[type=text] {
+			border: 1px solid #999;
+		}
+		.searchbar .datebox {
+			margin-bottom: 20px;
+		}
+		.col1 {
+			width: 100%;
+		}
+		.col2 {
+			width: 100%;
+			clear: both;
+		}
+		.col3 {
+			width: 100%;
+			clear: both;
+		}
+	}
+
+	@media only screen and (min-width: 480px) and (min-width: 1024px) {
+		.searchbar form {
+			width: 100%;
+			clear: both;
+			color: #333;
+		}
+	} 
+
