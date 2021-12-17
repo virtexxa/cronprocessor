@@ -54,6 +54,7 @@ while (<>) {
 
 	if($_ =~ /^Subject\:/ && $header) {
 		$handler = 'process_local' if($_ =~ /^Subject\:\ $subject_tag/ && $handler ne "discard");
+		$handler = 'process_local' if($_ =~ /unattended\-upgrades/ && $conf->{'cron'}->{'unattended-upgrades'} eq "Y");
 		$handler = 'discard' if($_ =~ /^X\-VXX\-Loop\-Detect\:\ system\@virtexxa\.com/);
 		foreach my $key (keys %{$conf->{'cron'}->{'ignore'}}) {
 			if($_ =~ /$key/) {

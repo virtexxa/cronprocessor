@@ -27,6 +27,9 @@ sub _config {
 				# slug (shortname)
 				'slug'		=> 'virtexxa',
 
+                                # unattended-upgrades - you like them in the database or not:
+                                'unattended-upgrades'   => 'Y', # Y or N
+
 				# Enter here path of cronscripts you do not want to be saved to the database.
 				# instead of to be added to the database, the cron mail will be delivered normally.
 				'ignore'	=> {
